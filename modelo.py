@@ -45,9 +45,9 @@ class AppBD():
                 self.connection.close()
                 print("A conexao com o sqlite foi fechada")
     
-    def select_all_products(self)
+    def select_all_products(self):
         self.abrirConexao()
-        select_query = ''' SELECT * FROM products'''
+        select_query = ''' SELECT * FROM products;'''
         products = []
         try:
             cursor = self.connection.cursor()
@@ -62,4 +62,34 @@ class AppBD():
                 print("A conexao com o sqlite foi fechada")
         return products
 
-    def
+    def update_products(self, name, price, product_id):
+        self.abrirConexao()
+        update_query = """ UPDATE products SET name = ?, price = ? WHERE id = ?;"""
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(update_query, (name, price, product_id))
+            self.connection.commit()
+            print("Dados atualizados com sucesso")
+        except sqlite3.Error as error:
+            print("Falha ao alterar dados na tabela", error)
+        finally:
+            if self.connection:
+                cursor.close()
+                self.connection.close()
+                print("A conexão com o sqlite foi fechada")
+    
+    def delete_products(self, product_id): # definição da função de apagar dados com base no id do produto
+        self.abrirConexao() # abre conexão
+        delete_query = """ DELETE FROM products WHERE id = ?; """ # comando SQL para deletar um dado de uma tabela
+        try: # execução do código
+            cursor = self.connection.cursor() # abrindo o cursor parar executar o comando SQL
+            cursor.execute(delete_query, (product_id)) # cursor executando o comando SQL
+            self.connection.commit() # Enviando as alterações pro banco de dados
+            print("Produto deletado com sucesso") # mensagem de sucesso
+        except sqlite3.Error as error: # tratamento de exceção
+            print("Erro ao deletar produto", error) # mensagem de erro
+        finally: # fechar o cursor e a conexão
+            if self.connection: # se a conexão existir
+                cursor.close() # fechando o cursor
+                self.connection.close() # fechando a conexão 
+                print("A conexão com o sqlite foi fechada") # mensagem de fechamento concluido
