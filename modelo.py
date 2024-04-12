@@ -62,7 +62,7 @@ class AppBD():
                 print("A conexao com o sqlite foi fechada")
         return products
 
-    def update_products(self, name, price, product_id):
+    def update_products(self, product_id, name, price):
         self.abrirConexao()
         update_query = """ UPDATE products SET name = ?, price = ? WHERE id = ?;"""
         try:
@@ -83,7 +83,7 @@ class AppBD():
         delete_query = """ DELETE FROM products WHERE id = ?; """ # comando SQL para deletar um dado de uma tabela
         try: # execução do código
             cursor = self.connection.cursor() # abrindo o cursor parar executar o comando SQL
-            cursor.execute(delete_query, (product_id)) # cursor executando o comando SQL
+            cursor.execute(delete_query, (product_id,)) # cursor executando o comando SQL
             self.connection.commit() # Enviando as alterações pro banco de dados
             print("Produto deletado com sucesso") # mensagem de sucesso
         except sqlite3.Error as error: # tratamento de exceção

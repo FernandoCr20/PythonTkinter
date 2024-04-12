@@ -27,6 +27,12 @@ class PrincipalBD():
         self.btnCadastrar = tk.Button(self.janela, text="Adicionar", command=self.CadastrarProduto)
         self.btnCadastrar.pack()
 
+        self.btnAtualizar = tk.Button(self.janela, text="Atualizar", command=self.AtualizarProduto)
+        self.btnAtualizar.pack()
+
+        self.btnDeletar = tk.Button(self.janela, text="Deletar", command=self.DeletarProduto)
+        self.btnDeletar.pack()
+
     def CadastrarProduto(self):
         try:
             name = self.entryNome.get()
@@ -41,12 +47,53 @@ class PrincipalBD():
 
     def ExibirTela(self):
         try:
+            self.treeProdutos.delete(*self.treeProdutos.get_children())
+            products = self.objBD.select_all_products() 
             print("**Dados disponiveis**")
             products = self.objBD.select_all_products()
             for product in products:
                 self.treeProdutos.insert("", tk.END, values=product)
         except:
             print("Não foi possível acessar os dados")
+
+    def AtualizarProduto(self):
+        try:
+            selected_item = self.treeProdutos.selection() # selecionar o item que você quer atualizar
+            if not selected_item: # se nada foi selecionado ele encerra a função
+                return
+            item = self.treeProdutos.item(selected_item) # lista com diferentes tipos de dados
+            print(item)
+            product = item['values'] # da lista só o values
+            print(product)
+            product_id = product[0] # do values só o ID que é o indice 0
+            print(product_id)
+            nome = self.entryNome.get()
+            preco = float(self.entryPreco.get())
+            self.objBD.update_products(product_id, nome, preco)
+            self.exibirTela()
+            self.entryNome.delete(0, tk.END)
+            self.entryPreco.delete(0, tk.END)
+            print("Atualização realizada com sucesso")
+        except:
+            print("não foi possivel atualizar")
+    
+    def DeletarProduto(self):
+        try:
+            selected_item = self.treeProdutos.selection() # selecionar o item que você quer atualizar
+            if not selected_item: # se nada foi selecionado ele encerra a função
+                return
+            item = self.treeProdutos.item(selected_item) # lista com diferentes tipos de dados
+            print(item)
+            product = item['values'] # da lista só o values
+            print(product)
+            product_id = product[0] # do values só o ID que é o indice 0
+            print(product_id)
+            self.objBD.delete_products(product_id) # deletar o item pelo id
+            self.exibirTela() 
+            print("Item deletado com sucesso")
+        except:
+            print("não foi possivel deletar")
+
 
 janela = tk.Tk() # criar a janela principal
 
